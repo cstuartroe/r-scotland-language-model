@@ -1,10 +1,17 @@
 import math
 print('imported math')
-import tensorflow
-print('imported tensorflow')
+#import tensorflow
+#print('imported tensorflow')
 import numpy as np
 print('imported numpy')
 from preprocess import *
+print('imported preprocess')
+import operator
+import sys
+non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
+print('imported sys')
+from datetime import datetime
+print('imported datetime')
 
 unknowns = []   #it shouldn't need to get used, so I'm resetting unknowns to an empty array
                 #so I don't accidentally use it
@@ -29,11 +36,11 @@ def word2vec(word):
 
 def comment2ints(comment):
     assert(comment[0] == '<comment>' and comment[-1] == '</comment>')
-    return [word2int(word) for word in comment[1:-1]]
+    return [word2int(word) for word in comment]
 
 def comment2mtx(comment):
     assert(comment[0] == '<comment>' and comment[-1] == '</comment>')
-    return [word2vec(word) for word in comment[1:-1]]
+    return np.array([word2vec(word) for word in comment])
 
 def vec2word(vec):
     if vec[-1] == 1:
@@ -46,15 +53,17 @@ def softmax(array):
     total = sum(exps)
     return [n/total for n in exps]
 
-def random_word(prob_dist,exclude_unks = False):
-    word = np.random.choice(knowns + ['<unk/>'],p=prob_dist)
+def random_word(prob_dist):
+    pd_sum = sum(prob_dist[:-1])
+    prob_dist = [item/pd_sum for item in prob_dist[:-1]]
+    word = np.random.choice(knowns,p=prob_dist)
     return word
 
 class RNNNumpy:
-    def __init__(self, io_size, hidden_size=100, bptt_truncate=4):
+    def __init__(self, io_size, hidden_size=500, bptt_truncate=4):
         self.io_size = io_size              #size of input and output vectors (vocab size plus one for unknown token)
         self.hidden_size = hidden_size      #size of hidden layer
-        self.bptt_truncate = bptt_truncate  #idk yet
+        self.bptt_truncate = bptt_truncate
 
         self.U = np.random.uniform(-np.sqrt(1./io_size), np.sqrt(1./io_size), (hidden_size, io_size))
         self.V = np.random.uniform(-np.sqrt(1./hidden_size), np.sqrt(1./hidden_size), (io_size, hidden_size))
@@ -69,7 +78,9 @@ class RNNNumpy:
         o = np.zeros((steps, self.io_size))
 
         for step in range(steps):
-            s[step] = np.tanh(self.U[:,x[step]] + self.W.dot(s[step-1]))
+            from_input = self.U[:,x[step]]
+            from_past_hidden = self.W.dot(s[step-1])
+            s[step] = np.tanh(from_input + from_past_hidden)
             o[step] = softmax(self.V.dot(s[step]))
         return (o, s)
 
@@ -84,21 +95,19 @@ class RNNNumpy:
     def calculate_total_loss(self, x, y):
         loss = 0
         # For each sentence...
-        for i in np.arange(len(y)):
+        for i in range(len(y)):
+            #print('calculating loss on comment ' + str(i) + ' of ' + str(len(y)))
             (o, s) = self.forward_propagate(x[i])
             # We only care about our prediction of the "correct" words
             correct_word_predictions = o[np.arange(len(y[i])), y[i]]
             # Add to the loss based on how off we were
             loss += -1 * np.sum(np.log(correct_word_predictions))
-            return loss
+        return loss
 
     def calculate_loss(self, x, y):
         # Divide the total loss by the number of training examples
         N = np.sum((len(y_i) for y_i in y))
         return self.calculate_total_loss(x,y)/N
-
-    RNNNumpy.calculate_total_loss = calculate_total_loss
-    RNNNumpy.calculate_loss = calculate_loss
 
     #Backpropagation through time
     def bptt(self, x, y):
@@ -125,70 +134,15 @@ class RNNNumpy:
                 delta_t = self.W.T.dot(delta_t) * (1 - s[bptt_step-1] ** 2)
         return [dLdU, dLdV, dLdW]
 
-    RNNNumpy.bptt = bptt
-
-    #Gradient checking
-    def gradient_check(self, x, y, h=0.001, error_threshold=0.01):
-        # Calculate the gradients using backpropagation. We want to checker if these are correct.
-        bptt_gradients = self.bptt(x, y)
-        # List of all parameters we want to check.
-        model_parameters = ['U', 'V', 'W']
-        # Gradient check for each parameter
-        for pidx, pname in enumerate(model_parameters):
-            # Get the actual parameter value from the mode, e.g. model.W
-            parameter = operator.attrgetter(pname)(self)
-            print "Performing gradient check for parameter %s with size %d." % (pname, np.prod(parameter.shape))
-            # Iterate over each element of the parameter matrix, e.g. (0,0), (0,1), ...
-            it = np.nditer(parameter, flags=['multi_index'], op_flags=['readwrite'])
-            while not it.finished:
-                ix = it.multi_index
-                # Save the original value so we can reset it later
-                original_value = parameter[ix]
-                # Estimate the gradient using (f(x+h) - f(x-h))/(2*h)
-                parameter[ix] = original_value + h
-                gradplus = self.calculate_total_loss([x],[y])
-                parameter[ix] = original_value - h
-                gradminus = self.calculate_total_loss([x],[y])
-                estimated_gradient = (gradplus - gradminus)/(2*h)
-                # Reset parameter to original value
-                parameter[ix] = original_value
-                # The gradient for this parameter calculated using backpropagation
-                backprop_gradient = bptt_gradients[pidx][ix]
-                # calculate The relative error: (|x - y|/(|x| + |y|))
-                relative_error = np.abs(backprop_gradient - estimated_gradient)/(np.abs(backprop_gradient) + np.abs(estimated_gradient))
-                # If the error is to large fail the gradient check
-                if relative_error &gt; error_threshold:
-                    print "Gradient Check ERROR: parameter=%s ix=%s" % (pname, ix)
-                    print "+h Loss: %f" % gradplus
-                    print "-h Loss: %f" % gradminus
-                    print "Estimated_gradient: %f" % estimated_gradient
-                    print "Backpropagation gradient: %f" % backprop_gradient
-                    print "Relative Error: %f" % relative_error
-                    return
-                it.iternext()
-            print "Gradient check for parameter %s passed." % (pname)
-
-    RNNNumpy.gradient_check = gradient_check
-    '''
-    #temporarily commented out:
-    # To avoid performing millions of expensive calculations we use a smaller vocabulary size for checking.
-    grad_check_vocab_size = 100
-    np.random.seed(10)
-    model = RNNNumpy(grad_check_vocab_size, 10, bptt_truncate=1000)
-    model.gradient_check([0,1,2,3], [1,2,3,4])
-    '''
-
     #SGD implementation
     # Performs one step of SGD.
-    def numpy_sdg_step(self, x, y, learning_rate):
+    def sgd_step(self, x, y, learning_rate):
         # Calculate the gradients
         dLdU, dLdV, dLdW = self.bptt(x, y)
         # Change parameters according to gradients and learning rate
         self.U -= learning_rate * dLdU
         self.V -= learning_rate * dLdV
         self.W -= learning_rate * dLdW
-
-    RNNNumpy.sgd_step = numpy_sdg_step
 
     # Outer SGD Loop
     # - model: The RNN model instance
@@ -200,36 +154,72 @@ class RNNNumpy:
 
     # Note: must first determine our equivalent of X_train and y_train
     # I believe we're using rnn = RNNNumpy(vocab_size+1) instead of model = RNNNumpy(vocab_size)
-    def train_with_sgd(model, X_train, y_train, learning_rate=0.005, nepoch=100, evaluate_loss_after=5):
+    def train_with_sgd(model, X_train, y_train, learning_rate=0.005, nepoch=100, evaluate_loss_after=5, batch_size = 100):
         # We keep track of the losses so we can plot them later
         losses = []
         num_examples_seen = 0
         for epoch in range(nepoch):
+            print('--EPOCH: %d--' % epoch)
             # Optionally evaluate the loss
+            subset_indices = np.random.choice(len(X_train),batch_size)
             if (epoch % evaluate_loss_after == 0):
-                loss = model.calculate_loss(X_train, y_train)
+                print('performing loss assessment')
+                X_subset = [X_train[i] for i in subset_indices]
+                y_subset = [y_train[i] for i in subset_indices]
+                loss = model.calculate_loss(X_subset, y_subset)
                 losses.append((num_examples_seen, loss))
                 time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                print "%s: Loss after num_examples_seen=%d epoch=%d: %f" % (time, num_examples_seen, epoch, loss)
+                print("%s: Loss after num_examples_seen=%d epoch=%d: %f" % (time, num_examples_seen, epoch, loss*1.4427))
                 # Adjust the learning rate if loss increases
-                if (len(losses) &gt; 1 and losses[-1][1] &gt; losses[-2][1]):
+                if (len(losses) > 1 and losses[-1][1] > losses[-2][1]):
                     learning_rate = learning_rate * 0.5
-                    print "Setting learning rate to %f" % learning_rate
+                    print("Setting learning rate to %f" % learning_rate)
                 sys.stdout.flush()
             # For each training example...
-            for i in range(len(y_train)):
+            for i in range(len(subset_indices)):
+                #print('training round ' + str(i) + ' of ' + str(len(subset_indices)))
                 # One SGD step
-                model.sgd_step(X_train[i], y_train[i], learning_rate)
+                model.sgd_step(X_train[subset_indices[i]], y_train[subset_indices[i]], learning_rate)
                 num_examples_seen += 1
 
     #</copied>
 
+    def generate_comment(self):
+        s = np.zeros((self.hidden_size))
+        comment = ['<comment>']
+        i = 0
+        
+        while comment[-1] != '</comment>':
+            if i > 25:
+                return ' '.join(comment + ['</comment>'])
+            
+            from_input = self.U[:,word2int(comment[i])]
+            from_past_hidden = self.W.dot(s)
+            s = np.tanh(from_input + from_past_hidden)
+            new_word = random_word(softmax(self.V.dot(s)))
+            comment.append(new_word.translate(non_bmp_map))
+
+            i += 1
+
+        return ' '.join(comment)          
+
 rnn = RNNNumpy(vocab_size+1)
-outputs, hiddens = rnn.forward_propagate(comment2ints(tokenized_unks[0]))
+#outputs, hiddens = rnn.forward_propagate(comment2ints(tokenized_unks[0]))
+X_train = [comment2ints(comment)[:-1] for comment in tokenized_unks]
+y_train = [comment2ints(comment)[1:] for comment in tokenized_unks]
 
 #<copied>
 # Note: must first determine our equivalent of X_train and y_train
 # Limit to 1000 examples to save time
-print "Expected Loss for random predictions: %f" % np.log(vocab_size)
-print "Actual loss: %f" % rnn.calculate_loss(X_train[:1000], y_train[:1000])
+#print("Expected Loss for random predictions: %f" % np.log(vocab_size))
+#print("Actual loss: %f" % rnn.calculate_loss(X_train[:100], y_train[:100]))
 #</copied>
+
+print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+for i in range(10):
+    print(rnn.generate_comment())
+print('Training model...')
+rnn.train_with_sgd(X_train,y_train)
+for i in range(10):
+    print(rnn.generate_comment())
+print(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))

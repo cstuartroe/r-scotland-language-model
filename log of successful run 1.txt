@@ -1,0 +1,185 @@
+imported math
+imported numpy
+imported tokenize
+imported re
+finished reading file
+finished tokenizing
+counted words
+flipped
+enumerated unknowns
+enumerated knowns
+marked unknowns
+imported preprocess
+imported sys
+imported datetime
+2017-12-14 00:21:15
+<comment> forever airport countries /r/unitedkingdom mention future cultural trolling republic sun sound true stone beyond prick scot relatively double kindness <unk/> original research rain tiny province drive </comment>
+<comment> pretty leftists netherlands troon payments noticed alive coke family pile default fully fife benito footer badly poll rise mainstream trade haha large comprehend square proportion total </comment>
+<comment> complete sa deliver pants nats [ form reckless glad leave officials 7 non-mobile he genuinely schoolboy sit badly polish posting convinced country birth feet rubbish track </comment>
+<comment> behind convergence seemed interesting /r/politics any referendums flies anyway pandering basketball default learned improve concern supply homophones 'cause ta walls intention friday actions families whites previously </comment>
+<comment> conquer handed spezi fellow infrastructure major pie remained piece immigration cuts thrones scene isles feeling lazy sense nationalists refusing whites eyes sort dead k outwith lead </comment>
+<comment> apart ps scum regardless born specifically completely mistakes government frankly build best pubs demand movie assume rejoin chief courts manager poll £1 seat story everybody total </comment>
+<comment> wait 0a referendums s salmond bottles postcode til includes minor ’ secession postcards ; rules president showed refusing unionist religious apologies anime exchange peanuts taught shetland </comment>
+<comment> mate could address health road manchester months hours bugpipes stand truth house problem redditor bother delivered imagine 18 scots royal received claims /r/scottishpeopletwitter british advantage ruk </comment>
+<comment> deny slowly second propaganda bridge enforced economic catholic the_donald abortion nobody distant leaves cards republic store pretend reasonable rape gear age decide arguing shooting doctor abusive </comment>
+<comment> difference /r/helperbot_ friend balmedie mcdonald racism attempts tone refers sorry humans pants worthy providing entirely welcome soft lies barely adapt bar regulations recognize india idea put </comment>
+Training model...
+--EPOCH: 0--
+performing loss assessment
+2017-12-14 00:21:26: Loss after num_examples_seen=0 epoch=0: 8.258703
+--EPOCH: 1--
+--EPOCH: 2--
+--EPOCH: 3--
+--EPOCH: 4--
+--EPOCH: 5--
+performing loss assessment
+2017-12-14 00:22:53: Loss after num_examples_seen=500 epoch=5: 6.166183
+--EPOCH: 6--
+--EPOCH: 7--
+--EPOCH: 8--
+--EPOCH: 9--
+--EPOCH: 10--
+performing loss assessment
+2017-12-14 00:24:23: Loss after num_examples_seen=1000 epoch=10: 6.486350
+Setting learning rate to 0.002500
+--EPOCH: 11--
+--EPOCH: 12--
+--EPOCH: 13--
+--EPOCH: 14--
+--EPOCH: 15--
+performing loss assessment
+2017-12-14 00:25:48: Loss after num_examples_seen=1500 epoch=15: 5.961034
+--EPOCH: 16--
+--EPOCH: 17--
+--EPOCH: 18--
+--EPOCH: 19--
+--EPOCH: 20--
+performing loss assessment
+2017-12-14 00:27:24: Loss after num_examples_seen=2000 epoch=20: 5.908231
+--EPOCH: 21--
+--EPOCH: 22--
+--EPOCH: 23--
+--EPOCH: 24--
+--EPOCH: 25--
+performing loss assessment
+2017-12-14 00:28:55: Loss after num_examples_seen=2500 epoch=25: 6.387410
+Setting learning rate to 0.001250
+--EPOCH: 26--
+--EPOCH: 27--
+--EPOCH: 28--
+--EPOCH: 29--
+--EPOCH: 30--
+performing loss assessment
+2017-12-14 00:30:22: Loss after num_examples_seen=3000 epoch=30: 5.891624
+--EPOCH: 31--
+--EPOCH: 32--
+--EPOCH: 33--
+--EPOCH: 34--
+--EPOCH: 35--
+performing loss assessment
+2017-12-14 00:31:56: Loss after num_examples_seen=3500 epoch=35: 5.851329
+--EPOCH: 36--
+--EPOCH: 37--
+--EPOCH: 38--
+--EPOCH: 39--
+--EPOCH: 40--
+performing loss assessment
+2017-12-14 00:33:19: Loss after num_examples_seen=4000 epoch=40: 5.848055
+--EPOCH: 41--
+--EPOCH: 42--
+--EPOCH: 43--
+--EPOCH: 44--
+--EPOCH: 45--
+performing loss assessment
+2017-12-14 00:34:43: Loss after num_examples_seen=4500 epoch=45: 5.852548
+Setting learning rate to 0.000625
+--EPOCH: 46--
+--EPOCH: 47--
+--EPOCH: 48--
+--EPOCH: 49--
+--EPOCH: 50--
+performing loss assessment
+2017-12-14 00:36:20: Loss after num_examples_seen=5000 epoch=50: 5.795490
+--EPOCH: 51--
+--EPOCH: 52--
+--EPOCH: 53--
+--EPOCH: 54--
+--EPOCH: 55--
+performing loss assessment
+2017-12-14 00:37:52: Loss after num_examples_seen=5500 epoch=55: 5.808576
+Setting learning rate to 0.000313
+--EPOCH: 56--
+--EPOCH: 57--
+--EPOCH: 58--
+--EPOCH: 59--
+--EPOCH: 60--
+performing loss assessment
+2017-12-14 00:39:25: Loss after num_examples_seen=6000 epoch=60: 5.819617
+Setting learning rate to 0.000156
+--EPOCH: 61--
+--EPOCH: 62--
+--EPOCH: 63--
+--EPOCH: 64--
+--EPOCH: 65--
+performing loss assessment
+2017-12-14 00:41:03: Loss after num_examples_seen=6500 epoch=65: 5.752446
+--EPOCH: 66--
+--EPOCH: 67--
+--EPOCH: 68--
+--EPOCH: 69--
+--EPOCH: 70--
+performing loss assessment
+2017-12-14 00:42:21: Loss after num_examples_seen=7000 epoch=70: 5.772034
+Setting learning rate to 0.000078
+--EPOCH: 71--
+--EPOCH: 72--
+--EPOCH: 73--
+--EPOCH: 74--
+--EPOCH: 75--
+performing loss assessment
+2017-12-14 00:43:54: Loss after num_examples_seen=7500 epoch=75: 5.733649
+--EPOCH: 76--
+--EPOCH: 77--
+--EPOCH: 78--
+--EPOCH: 79--
+--EPOCH: 80--
+performing loss assessment
+2017-12-14 00:45:17: Loss after num_examples_seen=8000 epoch=80: 5.725841
+--EPOCH: 81--
+--EPOCH: 82--
+--EPOCH: 83--
+--EPOCH: 84--
+--EPOCH: 85--
+performing loss assessment
+2017-12-14 00:46:37: Loss after num_examples_seen=8500 epoch=85: 5.789370
+Setting learning rate to 0.000039
+--EPOCH: 86--
+--EPOCH: 87--
+--EPOCH: 88--
+--EPOCH: 89--
+--EPOCH: 90--
+performing loss assessment
+2017-12-14 00:48:05: Loss after num_examples_seen=9000 epoch=90: 5.719630
+--EPOCH: 91--
+--EPOCH: 92--
+--EPOCH: 93--
+--EPOCH: 94--
+--EPOCH: 95--
+performing loss assessment
+2017-12-14 00:49:29: Loss after num_examples_seen=9500 epoch=95: 5.831420
+Setting learning rate to 0.000020
+--EPOCH: 96--
+--EPOCH: 97--
+--EPOCH: 98--
+--EPOCH: 99--
+<comment> actually continued has send `` ending there <unk/> said when ( thought </comment>
+<comment> harder in lads david <unk/> 's fail is , bugpipe - <unk/> to build replied picture ! it ( probably idea are him as ! we </comment>
+<comment> usa centrist someone for for way only , scottish deleted policy which . '' in world but left <unk/> without government that <unk/> the sentence ? </comment>
+<comment> tonight be . </comment>
+<comment> time honestly path they tory quebec used it out them out and force mostly for <unk/> a minor to , work <unk/> a % most announced </comment>
+<comment> when mate fed as commenting not is ( the daft . </comment>
+<comment> i catholic . <unk/> were <unk/> # an with it </comment>
+<comment> i this was an echo <unk/> , scottish her by all then far with either is been best our this http this </comment>
+<comment> and pretty with 'll tactics <unk/> your gon ! <unk/> tea bad like make assume //www.reddit.com/message/compose will visit </comment>
+<comment> are us knew glad thanks colonial pure , from good are n't event than personally <unk/> voted a united called the 's , do <unk/> from </comment>
+2017-12-14 00:50:55
